@@ -190,6 +190,11 @@ hello.prototype.sayHello = () => {
   console.log('I say hello to you!')
 }
 
+const a = new hello()
+const b = new hello()
+const c = new goodBye()
+const d = new goodBye()
+
 a.sayHello() // I say hello to you!
 b.sayHello() // I say hello to you!
 ```
@@ -204,6 +209,12 @@ function hello(){
 function goodBye(){
   return 'Goodbye'
 }
+
+const a = new hello()
+const b = new hello()
+const c = new goodBye()
+const d = new goodBye()
+
 // Objects not linked yet => Errors
 c.sayHello() // Error: not a function
 d.sayHello() // Error: not a function
@@ -219,6 +230,11 @@ function hello(){
 function goodBye(){
   return 'Goodbye'
 }
+
+const a = new hello()
+const b = new hello()
+const c = new goodBye()
+const d = new goodBye()
 
 // This is a ES6 method. First argument will be the link at the bottom of the prototype chain, the second is the top link.
 Object.setPrototypeOf(goodBye.prototype, hello.prototype)
