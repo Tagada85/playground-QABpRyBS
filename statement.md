@@ -6,7 +6,7 @@ Aaaaah, prototypes... How many blog posts did you read where prototypes are list
 
 Object in Javascript have an internal property ( in the specification called [[Prototype]] ). This internal property is a reference to another object. Quick example:
 
-```javascript
+```javascript runnable
 // A simple object
 const myObject = {
   a: 2
@@ -16,15 +16,15 @@ console.log(myObject.a) // 2
 // We link newObject to myObject with Object.create
 const newObject = Object.create(myObject)
 
-console.log(newObject) // {}  
-console.log(newObject.a) // 2 LOLWUT? You empty or nah?
+console.log(newObject) // {}
+console.log(newObject.a) // 2  (!!??)
 ```
 
 *Object.create* creates a new object. It takes another object as an argument. The common way to think about what is happening is ( the *classical* way ) : I made a copy of this object. **You fool!!**
 
 As you can see, *newObject* is empty. We didn't copy, we linked *newObject* to *myObject*. *myObject* becomes a prototype of *newObject*. To know what is inside the prototype of an object, you can use **__proto__**.
 
-```javascript
+```javascript runnable
 console.log(newObject.__proto__) // { a: 2 }
 console.log(myObject.isPrototypeOf(newObject)) // true
 ```
@@ -33,7 +33,7 @@ Chains have links, [[Prototype]] is a chain. So how does Javascript uses prototy
 
 ## Up the chain... one link at a time.
 
-```javascript
+```javascript runnable
 const original = {
   a: 2
 }
@@ -61,10 +61,17 @@ Here is how your favourite language works: it tries to get the property *a* in t
 
 I decide to change the value *a* in *thirdLink* directly:
 
-```javascript
+```javascript runnable
+const original = {
+  a: 2
+}
+
+const secondComing = Object.create(original)
+
+const thirdLink = Object.create(secondComing)
 thirdLink.a = 3
 
-console.log(thirdLink) //{ a: 3 }
+console.log(thirdLink) // { a: 3 }
 console.log(thirdLink.a) // 3
 console.log(original.a) // 2
 ```
@@ -75,7 +82,15 @@ This is what we call a shadowed property. The new *a* value shadows the other *a
 
 What if the property in the top link can't be overwritten?
 
-```javascript
+```javascript runnable
+const original = {
+  a: 2
+}
+
+const secondComing = Object.create(original)
+
+const thirdLink = Object.create(secondComing)
+
 // Freeze the original, properties can't be changed
 Object.freeze(original)
 original.a = 3
@@ -93,7 +108,14 @@ Nothing changed because the prototype's property *a* is read-only.
 
 However, if you need to change the property value anyway when it is read-only. You must use *Object.defineProperty*:
 
-```javascript
+```javascript runnable
+const original = {
+  a: 2
+}
+
+const secondComing = Object.create(original)
+
+const thirdLink = Object.create(secondComing)
 // Freeze the original, properties can't be changed
 Object.freeze(original)
 
@@ -102,7 +124,7 @@ Object.defineProperty(thirdLink, 'a', { value: 5 })
 
 console.log(thirdLink.a) // 5
 ```
-So, whenever you think you are changing a value in a object, you must account for the prototypes up the chain. They may have properties with the same name that cant be overwritten in a certain way.
+So, whenever you think you are changing a value in a object, you must account for the prototypes up the chain. They may have properties with the same name that can't be overwritten in a certain way.
 
 ## What does it mean for functions?
 
@@ -112,7 +134,7 @@ In Javascript, however, there are no classes, just objects. The **class** keywor
 
 By default, every function gets a *prototype* property.
 
-```javascript
+```javascript runnable
 function hello(){
   return 'Hello World'
 }
@@ -127,7 +149,15 @@ console.log(goodBye.prototype) // goodBye {}
 
 Ok, so what happens if you don't copy like class-oriented languages? You create multiple objects with a [[Prototype]] link. Like so:
 
-```javascript
+```javascript runnable
+function hello(){
+  return 'Hello World'
+}
+
+function goodBye(){
+  return 'Goodbye'
+}
+
 const a = new hello()
 const b = new hello()
 const c = new goodBye()
@@ -141,7 +171,11 @@ console.log(Object.getPrototypeOf(d) === goodBye.prototype) // true
 
 All our objects link to the same *hello.prototype* or *goodBye.prototype* origin. So, our objects ( a, b, c and d ) are not completely separated from one another, but linked to the same origin. So, if I add a method in *hello.prototype*, *a* and *b* will have access to it, because Javascript will go up the chain to find it. But, I didn't change anything about *a* and *b*:
 
-```javascript
+```javascript runnable
+function hello(){
+  return 'Hello World'
+}
+
 // I'm not touching a or b
 hello.prototype.sayHello = () => {
   console.log('I say hello to you!')
@@ -153,13 +187,29 @@ b.sayHello() // I say hello to you!
 
 By **NOT** copying objects but linking them, Javascript doesn't need to have the entire object environment carried in each object. It just goes up the chain.
 
-Let's now make the *goodBye.prototype* a prototype of *hello.prototype*:
+```javascript runnable
+function hello(){
+  return 'Hello World'
+}
 
-```javascript
-
+function goodBye(){
+  return 'Goodbye'
+}
 // Objects not linked yet => Errors
 c.sayHello() // Error: not a function
-d.dayHello() // Error: not a function
+d.sayHello() // Error: not a function
+```
+
+Now, let's now make the *goodBye.prototype* a prototype of *hello.prototype*:
+
+```javascript runnable
+function hello(){
+  return 'Hello World'
+}
+
+function goodBye(){
+  return 'Goodbye'
+}
 
 // This is a ES6 method. First argument will be the link at the bottom of the prototype chain, the second is the top link.
 Object.setPrototypeOf(goodBye.prototype, hello.prototype)
@@ -182,7 +232,7 @@ And that, my dear friends, is the concept of prototypal inheritance. Now, I am n
 
 I see you waiting for some examples:
 
-```javascript
+```javascript runnable
 function Mammal(type){
   this.type = type
   this.talk = () => {
@@ -221,7 +271,7 @@ Joe.talk() // Hello friend
 
 ```
 
-```javascript
+```javascript runnable
 
 const SuperHero = {
   statement: function(){
@@ -239,6 +289,6 @@ Batman.statement() // 'I am an anonymous superhero'
 
 Classical inheritance is a parent-child relationship. It goes from top to bottom. Javascript has *prototypal delegation*. Although it *resembles* the classical inheritance, it's quite different. Objects are linked together, not copied. The references are more from bottom to top.
 
-Tell me what you think about this, I hope I've been clear enough.
+I hope I have been clear about the way prototypes and prototypal delegation work in Javascript.
 
 Oh, and don't bother giving me feedback about the schema, I already know it's gorgeous.
