@@ -185,6 +185,10 @@ function hello(){
   return 'Hello World'
 }
 
+function goodBye(){
+  return 'Goodbye'
+}
+
 // I'm not touching a or b
 hello.prototype.sayHello = () => {
   console.log('I say hello to you!')
