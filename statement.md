@@ -239,6 +239,10 @@ function goodBye(){
   return 'Goodbye'
 }
 
+hello.prototype.sayHello = () => {
+  console.log('I say hello to you!')
+}
+
 const a = new hello()
 const b = new hello()
 const c = new goodBye()
