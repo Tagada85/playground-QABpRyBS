@@ -318,7 +318,7 @@ const SuperHero = {
 
 const Batman = Object.create(SuperHero)
 
-Batman.statement() // 'I am an anonymous superhero'
+console.log( Batman.statement() ) // 'I am an anonymous superhero'
 
 ```
 
