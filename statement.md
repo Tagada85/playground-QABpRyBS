@@ -25,6 +25,15 @@ console.log(newObject.a) // 2  (!!??)
 As you can see, *newObject* is empty. We didn't copy, we linked *newObject* to *myObject*. *myObject* becomes a prototype of *newObject*. To know what is inside the prototype of an object, you can use **__proto__**.
 
 ```javascript runnable
+// A simple object
+const myObject = {
+  a: 2
+}
+console.log(myObject.a) // 2
+
+// We link newObject to myObject with Object.create
+const newObject = Object.create(myObject)
+
 console.log(newObject.__proto__) // { a: 2 }
 console.log(myObject.isPrototypeOf(newObject)) // true
 ```
